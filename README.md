@@ -2,6 +2,16 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Download & Build on local
+
+```
+//on local
+git clone https://github.com/ppooii27/finervision
+cd finervision
+npm install
+npm start
+```
+
 ## Available Scripts
 
 In the project directory, you can run:
