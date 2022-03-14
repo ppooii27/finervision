@@ -2,7 +2,13 @@ import React, { useState, useRef } from 'react';
 import moment from 'moment';
 import Section from '../Section/Section';
 import ExpandItem from '../../models/expandItem';
-import { FormContainer, Card, InputContainer } from '../../styles/comment';
+import MessageModel from '../../models/message';
+import {
+	FormContainer,
+	Card,
+	InputContainer,
+	Message,
+} from '../../styles/comment';
 
 const initState: Array<ExpandItem> = [
 	{ id: 1, isExpanded: true },
@@ -10,8 +16,11 @@ const initState: Array<ExpandItem> = [
 	{ id: 3, isExpanded: false },
 ];
 
+const initMessage: MessageModel = { text: '', type: '' };
+
 const CommentForm: React.FC = () => {
 	const [isExpanded, setExpanded] = useState<ExpandItem[]>(initState);
+	const [message, setMessage] = useState<MessageModel>(initMessage);
 	const formRef = useRef<HTMLFormElement>(null);
 	const firstnameRef = useRef<HTMLInputElement>(null);
 	const surnameRef = useRef<HTMLInputElement>(null);
@@ -31,7 +40,7 @@ const CommentForm: React.FC = () => {
 		}
 
 		if (!validation(section.id)) return;
-
+		setMessage(initMessage);
 		const currentIdx = section.id - 1;
 		const nextIdx = section.id;
 		setExpanded((currentState) => {
@@ -63,21 +72,29 @@ const CommentForm: React.FC = () => {
 			}`,
 			comments: commentRef.current!.value,
 		};
-		const response = await fetch('http://127.0.0.1:8000/comments', {
-			method: 'POST',
-			body: JSON.stringify(comments),
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json',
-			},
-		});
 
-		await response.json().then((data) => {
-			if ('id' in data && typeof data.id === 'number') {
-				alert('New comment has been inserted');
-				clearup();
-			}
-		});
+		try {
+			const response = await fetch('http://127.0.0.1:8000/comments', {
+				method: 'POST',
+				body: JSON.stringify(comments),
+				headers: {
+					Accept: 'application/json',
+					'Content-Type': 'application/json',
+				},
+			});
+
+			await response.json().then((data) => {
+				if ('id' in data && typeof data.id === 'number') {
+					setMessage({
+						text: 'New comment has been inserted',
+						type: 'success',
+					});
+					clearup();
+				}
+			});
+		} catch (error) {
+			throw new Error('Inserting data failed!');
+		}
 	};
 
 	const validation = (sectionIdx = isExpanded.length) => {
@@ -92,9 +109,10 @@ const CommentForm: React.FC = () => {
 				surname.trim().length === 0 ||
 				email.trim().length === 0
 			) {
-				alert(
-					'Please enter a valid first name and surname and email (non-empty values)'
-				);
+				setMessage({
+					text: 'Please enter a valid first name and surname and email (non-empty values)',
+					type: 'error',
+				});
 				return;
 			}
 
@@ -103,7 +121,10 @@ const CommentForm: React.FC = () => {
 					/^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z]+$/
 				) < 0
 			) {
-				alert('Please enter a valid email (john@abc.com)');
+				setMessage({
+					text: 'Please enter a valid email (john@abc.com)',
+					type: 'error',
+				});
 				return;
 			}
 			isValid = true;
@@ -132,9 +153,10 @@ const CommentForm: React.FC = () => {
 				month.trim().length === 0 ||
 				year.trim().length === 0
 			) {
-				alert(
-					'Please enter a valid telephone number and gender and date of birth (non-empty values)'
-				);
+				setMessage({
+					text: 'Please enter a valid telephone number and gender and date of birth (non-empty values)',
+					type: 'error',
+				});
 				return;
 			}
 
@@ -143,12 +165,18 @@ const CommentForm: React.FC = () => {
 					/^(?:0|\(?\+44\)?\s?|0044\s?)[1-79](?:[\.\-\s]?\d\d){4}$/
 				) < 0
 			) {
-				alert('Please enter a valid UK telephone number');
+				setMessage({
+					text: 'Please enter a valid UK telephone number',
+					type: 'error',
+				});
 				return;
 			}
 
 			if (!moment(dob, 'DD-MM-YYYY', true).isValid()) {
-				alert('Please enter a valid date of birth (DD-MM-YYYY)');
+				setMessage({
+					text: 'Please enter a valid date of birth (DD-MM-YYYY)',
+					type: 'error',
+				});
 				return;
 			}
 			isValid = true;
@@ -158,7 +186,10 @@ const CommentForm: React.FC = () => {
 			const comments = commentRef.current!.value;
 
 			if (comments.trim().length === 0) {
-				alert('Please enter a valid comment (non-empty values)');
+				setMessage({
+					text: 'Please enter a valid comment (non-empty values)',
+					type: 'error',
+				});
 				return;
 			}
 			isValid = true;
@@ -168,11 +199,15 @@ const CommentForm: React.FC = () => {
 
 	const clearup = () => {
 		formRef.current!.reset();
+		setTimeout(() => {
+			setMessage(initMessage);
+		}, 5000);
 		setExpanded([...initState]);
 	};
 	return (
 		<>
 			<FormContainer ref={formRef}>
+				<Message type={message.type}>{message.text}</Message>
 				<Card>
 					<Section
 						title="Step 1: Your details"
@@ -186,6 +221,7 @@ const CommentForm: React.FC = () => {
 									type="text"
 									id="firstname"
 									ref={firstnameRef}
+									data-testid="firstname"
 								/>
 							</div>
 							<div>
@@ -194,11 +230,17 @@ const CommentForm: React.FC = () => {
 									type="text"
 									id="surname"
 									ref={surnameRef}
+									data-testid="surname"
 								/>
 							</div>
 							<div>
 								<label htmlFor="email">Email Address:</label>
-								<input type="email" id="email" ref={emailRef} />
+								<input
+									type="email"
+									id="email"
+									ref={emailRef}
+									data-testid="email"
+								/>
 							</div>
 						</InputContainer>
 					</Section>
@@ -214,11 +256,16 @@ const CommentForm: React.FC = () => {
 									type="tel"
 									pattern="^(?:0|\(?\+44\)?\s?|0044\s?)[1-79](?:[\.\-\s]?\d\d){4}$"
 									ref={telephoneRef}
+									data-testid="telephone"
 								/>
 							</div>
 							<div>
 								<label>Gender</label>
-								<select name="gender" ref={genderRef}>
+								<select
+									name="gender"
+									ref={genderRef}
+									data-testid="gender"
+								>
 									<option value="">Select Gender</option>
 									<option value="male">Male</option>
 									<option value="female">Female</option>
@@ -231,18 +278,21 @@ const CommentForm: React.FC = () => {
 									min="1"
 									max="31"
 									ref={dayRef}
+									data-testid="dob-day"
 								/>
 								<input
 									type="number"
 									min="1"
 									max="12"
 									ref={monthRef}
+									data-testid="dob-month"
 								/>
 								<input
 									type="number"
 									min="1900"
 									max={currentYear}
 									ref={yearRef}
+									data-testid="dob-year"
 								/>
 							</div>
 						</InputContainer>
@@ -259,6 +309,7 @@ const CommentForm: React.FC = () => {
 									rows={8}
 									cols={30}
 									ref={commentRef}
+									data-testid="comment"
 								></textarea>
 							</div>
 						</InputContainer>

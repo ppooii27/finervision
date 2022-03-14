@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 export const CommentList = styled.section`
 	margin: 5px;
@@ -13,15 +13,15 @@ export const FlexboxRow = styled.div`
 	border-radius: 0px;
 	border: 1px solid #999;
 	box-shadow: 1px 1px 6px 2px #6d6d6d;
-	background: #d6d6d6;;
+	background: #d6d6d6; ;
 `;
 
 export const FlexboxHeader = styled.header`
 	display: flex;
 	border: 1px solid;
 	background-color: #fdbd0f;
-    background-image: linear-gradient(#fdbd0f,#df8c0e);
-    color: #fff;
+	background-image: linear-gradient(#fdbd0f, #df8c0e);
+	color: #fff;
 `;
 
 export const FlexboxColumn = styled.div`
@@ -35,7 +35,7 @@ export const FlexboxColumn = styled.div`
 	box-sizing: border-box;
 `;
 
-export const FormContainer = styled.div`
+export const FormContainer = styled.form`
 	display: flex;
 	justify-content: center;
 	flex-direction: column;
@@ -83,4 +83,17 @@ export const InputContainer = styled.div`
 		box-shadow: inset 1px 1px 16px -4px #6d6d6d;
 		background: #fff;
 	}
+`;
+
+export const Message = styled.div`
+	${(props) =>
+		props.type === 'error' &&
+		css`
+			color: red;
+		`}
+	${(props) =>
+		props.type === 'success' &&
+		css`
+			color: green;
+		`}
 `;

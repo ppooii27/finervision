@@ -14,7 +14,6 @@ const Section: React.FC<{
 	const { getCollapseProps, getToggleProps } = useCollapse(config);
 	const handleButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
 		event.preventDefault();
-
 		props.handleNext(props.defaultExpanded);
 	};
 	return (
@@ -28,7 +27,7 @@ const Section: React.FC<{
 				<SectionContent data-testid="content">
 					{props.children}
 					<ButtonContainer>
-						<Button onClick={handleButtonClick}>Next &gt;</Button>
+						<Button onClick={handleButtonClick} data-testid="next-button">Next &gt;</Button>
 					</ButtonContainer>
 				</SectionContent>
 			</div>

@@ -8,13 +8,13 @@ const ListComment: React.FC<{comments: CommentModel[]}> = (props) => {
 	return (
 		<CommentList>
 			<FlexboxHeader>
-				<FlexboxColumn>First Name</FlexboxColumn>
-				<FlexboxColumn>Last Name</FlexboxColumn>
-				<FlexboxColumn>Gender</FlexboxColumn>
-				<FlexboxColumn>Email</FlexboxColumn>
-				<FlexboxColumn>Telephone</FlexboxColumn>
-				<FlexboxColumn>Date of birth</FlexboxColumn>
-				<FlexboxColumn>Comment</FlexboxColumn>
+				<FlexboxColumn data-testid="header-firstname">First Name</FlexboxColumn>
+				<FlexboxColumn data-testid="header-surname">Surname</FlexboxColumn>
+				<FlexboxColumn data-testid="header-gender">Gender</FlexboxColumn>
+				<FlexboxColumn data-testid="header-email">Email</FlexboxColumn>
+				<FlexboxColumn data-testid="header-telephone">Telephone</FlexboxColumn>
+				<FlexboxColumn data-testid="header-dob">Date of birth</FlexboxColumn>
+				<FlexboxColumn data-testid="header-comment">Comment</FlexboxColumn>
 			</FlexboxHeader>
 			{comments?.map((comment) => (
 				<Comment comment={comment} key={comment.id} />
