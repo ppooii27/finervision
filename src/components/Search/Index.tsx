@@ -5,6 +5,7 @@ import {
 	SearchInput,
 	Searchbutton,
 } from '../../styles/search';
+import configData from '../../config.json'
 
 const Index: React.FC<{ setComments: (array: Comment[]) => void }> = (
 	props
@@ -23,7 +24,7 @@ const Index: React.FC<{ setComments: (array: Comment[]) => void }> = (
 	const getComments = async (keyword: string) => {
 		try {
 			const comments = await fetch(
-				`http://127.0.0.1:8000/getCommentsByFirstname/${keyword}`
+				`${configData.COMMENT.SEARCH_BY_FIRSTNAME_API.URL}/${keyword}`
 			);
 			return comments;
 		} catch (error) {

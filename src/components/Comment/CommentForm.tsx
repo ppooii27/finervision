@@ -9,6 +9,7 @@ import {
 	InputContainer,
 	Message,
 } from '../../styles/comment';
+import configData from '../../config.json'
 
 const initState: Array<ExpandItem> = [
 	{ id: 1, isExpanded: true },
@@ -74,7 +75,7 @@ const CommentForm: React.FC = () => {
 		};
 
 		try {
-			const response = await fetch('http://127.0.0.1:8000/comments', {
+			const response = await fetch(configData.COMMENT.ADD_API.URL, {
 				method: 'POST',
 				body: JSON.stringify(comments),
 				headers: {
@@ -83,15 +84,15 @@ const CommentForm: React.FC = () => {
 				},
 			});
 
-			await response.json().then((data) => {
-				if ('id' in data && typeof data.id === 'number') {
-					setMessage({
-						text: 'New comment has been inserted',
-						type: 'success',
-					});
-					clearup();
-				}
-			});
+			const data = await response.json();
+
+			if ('id' in data && typeof data.id === 'number') {
+				setMessage({
+					text: 'New comment has been inserted',
+					type: 'success',
+				});
+				clearup();
+			}
 		} catch (error) {
 			throw new Error('Inserting data failed!');
 		}

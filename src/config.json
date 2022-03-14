@@ -1,0 +1,16 @@
+{
+	"COMMENT": {
+		"ADD_API": {
+			"URL": "http://127.0.0.1:8000/comments",
+			"METHOD": "POST"
+		},
+		"GET_API": {
+			"URL": "http://127.0.0.1:8000/comments",
+			"METHOD": "GET"
+		},
+		"SEARCH_BY_FIRSTNAME_API": {
+			"URL": "http://127.0.0.1:8000/getCommentsByFirstname",
+			"METHOD": "GET"
+		}
+	}
+}
